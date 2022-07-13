@@ -1,0 +1,2 @@
+# mff
+Maya Flag Formatter
