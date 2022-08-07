@@ -23,7 +23,7 @@ from typing import List, Tuple
 from mayaff import file_resources, mayaff_api, output
 from mayaff.config import MayaArgsConfig
 
-__version__ = "0.1.0-alpha.0.1"
+__version__ = "0.1.0-beta.1"
 _DESCRIPTION = "Command line tool to find and replace short maya flags."
 
 
@@ -94,7 +94,7 @@ def _main() -> int:
             msg.append(f"{len(files) - files_changed} files left unchanged.")
 
         if failed_files:
-            plural = "s" if files_changed > 1 else ""
+            plural = "s" if failed_files > 1 else ""
             output.print_failed(f"{failed_files} file{plural} failed to reformat.")
             return 1
 
