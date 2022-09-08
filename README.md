@@ -58,10 +58,10 @@ mayaff only supports python 3.7+
 
 ## Usage
 Options:
-```bash
+```
 usage: mayaff [-h] [-v] [-t {2018}] [--check] [--diff] [--quiet] [--exclude EXCLUDE]
-           [--exclude-files EXCLUDE_FILES [EXCLUDE_FILES ...]] [--single-thread]
-           source [source ...]
+              [--exclude-files EXCLUDE_FILES [EXCLUDE_FILES ...]] [--modules MODULES] [--single-thread]
+              source [source ...]
 
 Command line tool to find and replace short maya flags.
 
@@ -79,12 +79,17 @@ optional arguments:
   --exclude EXCLUDE     A regular expression for file names to exclude.
   --exclude-files EXCLUDE_FILES [EXCLUDE_FILES ...]
                         Exclude files. Separate files with space.
+  --modules MODULES     Maya modules to use for import. Example: --modules 'maya:cmds,pymel:core'
   --single-thread       Only execute mayaff on single thread.
 ```
 
-```bash
+```
 mayaff . --exclude-files package.py
 ```
+
+Some companies have custom wrappers around `cmds`. If you want `mayaff` to find your cmds module somewhere else use `--modules`.
+Example: `mayaff . --modules "maya:cmds,custom.module:cmds`
+
 
 ## Known limitations
 

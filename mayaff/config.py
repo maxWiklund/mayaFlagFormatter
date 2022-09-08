@@ -14,20 +14,23 @@
 
 import json
 import pkgutil
+from typing import List, Tuple
 
 
 class MayaArgsConfig(object):
     """Class to manage maya flags configuration."""
 
-    def __init__(self, config_version: str = "2018"):
+    def __init__(self, config_version: str = "2018", modules: List[Tuple[str, str]] = tuple(("maya", "cmds"))):
         """Construct class and load config.
 
         Args:
             config_version: Configuration name.
+            modules: List of maya modules to look for maya commands.
 
         """
         super().__init__()
         self._command_data = json.loads(pkgutil.get_data("mayaff", f"maya_configs/{config_version}.json"))
+        self.modules = modules
 
     def get_flags(self, command_name: str) -> dict:
         """Try to get command flags from command name.

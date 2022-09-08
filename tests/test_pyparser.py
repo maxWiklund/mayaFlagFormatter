@@ -203,3 +203,24 @@ class TestReformat(TestCase):
         )
         with self.assertRaises(SyntaxError) as context:
             self.assertRaises(SyntaxError, mayaff_api.format_string(source_code, self.config_cls))
+
+    def test_custom_modules(self):
+        source_code = textwrap.dedent(
+            """
+            from ABC.maya2 import abc
+
+            abc.textureWindow(source, ra=True)
+            """
+        )
+
+        expected_result = textwrap.dedent(
+            """
+            from ABC.maya2 import abc
+
+            abc.textureWindow(source, removeAllImages=True)
+            """
+        )
+
+        _config = config.MayaArgsConfig(modules=[("ABC.maya2", "abc")])
+
+        self.assertEqual(expected_result, mayaff_api.format_string(source_code, config=_config))

@@ -80,10 +80,11 @@ class Lexer(object):
 class MayaImportVisitor(ast.NodeVisitor):
     """Ast traversal class to find cmds import from maya."""
 
-    def __init__(self):
+    def __init__(self, modules):
         """Construct class and do nothing."""
         super().__init__()
         self.maya_imports = []
+        self.modules = modules
 
     def visit_Import(self, node: ast.Import) -> None:
         """Code to check if `maya.cmds` is imported.
@@ -93,8 +94,9 @@ class MayaImportVisitor(ast.NodeVisitor):
 
         """
         for _import in node.names:
-            if _import.name == "maya.cmds":
-                self.maya_imports.append(_import.asname or _import.name)
+            for imp in self.modules:
+                if _import.name == ".".join(imp):
+                    self.maya_imports.append(_import.asname or _import.name)
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
         """Code to check if `maya.cmds` is imported.
@@ -103,12 +105,10 @@ class MayaImportVisitor(ast.NodeVisitor):
             node: Node to check if maya is imported.
 
         """
-        if not node.module == "maya":
-            return
-
         for _import in node.names:
-            if _import.name == "cmds":
-                self.maya_imports.append(_import.asname or _import.name)
+            for module, imp in self.modules:
+                if node.module == module and _import.name == imp:
+                    self.maya_imports.append(_import.asname or _import.name)
 
 
 class MayaFlagsParser(object):
@@ -315,6 +315,6 @@ class MayaFlagsParser(object):
 
         """
         tree = ast.parse(source_code, file_name)
-        import_visitor = MayaImportVisitor()
+        import_visitor = MayaImportVisitor(self._config.modules)
         import_visitor.visit(tree)
         self._found_maya_modules = import_visitor.maya_imports

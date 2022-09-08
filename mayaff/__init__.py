@@ -24,7 +24,7 @@ from mayaff import file_resources, mayaff_api, output
 from mayaff.config import MayaArgsConfig
 
 
-__version__ = "0.1.0-beta.1"
+__version__ = "0.1.0-beta.2"
 _DESCRIPTION = "Command line tool to find and replace short maya flags."
 
 
@@ -34,7 +34,6 @@ def set_up_argparser() -> argparse.Namespace:
         f.replace(".json", "") for f in pkg_resources.resource_listdir("mayaff", "maya_configs") if f.endswith(".json")
     ]
 
-    # config_options = []
     parser = argparse.ArgumentParser(description=_DESCRIPTION)
     parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
     parser.add_argument("source", nargs="+", help="Directory or files you want to format.")
@@ -68,6 +67,11 @@ def set_up_argparser() -> argparse.Namespace:
         help="A regular expression for file names to exclude.",
     )
     parser.add_argument("--exclude-files", nargs="+", default=[], help="Exclude files. Separate files with space.")
+    parser.add_argument(
+        "--modules",
+        default="maya:cmds,pymel:core",
+        help="Maya modules to use for import. Examples: --modules 'maya:cmds,pymel:core'",
+    )
     parser.add_argument("--single-thread", action="store_true", default=False, help="Only execute mayaff on single thread.")
     return parser.parse_args()
 
@@ -75,7 +79,8 @@ def set_up_argparser() -> argparse.Namespace:
 def _main() -> int:
     """Run command line app with return code."""
     args = set_up_argparser()
-    config = MayaArgsConfig(args.target_version)
+    modules = [tuple(m.split(":")) for m in args.modules.split(",")]
+    config = MayaArgsConfig(args.target_version, modules)
     try:
         exclued_re = re.compile(args.exclude)
     except re.error:
