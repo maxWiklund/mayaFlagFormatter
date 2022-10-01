@@ -23,7 +23,7 @@ from typing import List, Tuple
 from mayaff import file_resources, mayaff_api, output
 from mayaff.config import MayaArgsConfig
 
-__version__ = "0.1.0-beta.2"
+__version__ = "0.1.0-beta.3"
 _DESCRIPTION = "Command line tool to find and replace short maya flags."
 
 

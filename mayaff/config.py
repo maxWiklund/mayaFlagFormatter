@@ -20,7 +20,7 @@ from typing import List, Tuple
 class MayaArgsConfig(object):
     """Class to manage maya flags configuration."""
 
-    def __init__(self, config_version: str = "2018", modules: List[Tuple[str, str]] = tuple(("maya", "cmds"))):
+    def __init__(self, config_version: str = "2018", modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
         """Construct class and load config.
 
         Args:
