@@ -17,14 +17,21 @@ import multiprocessing
 import pkg_resources
 import re
 import sys
+import os
 from concurrent import futures
 from typing import List, Tuple
 
 from mayaff import file_resources, mayaff_api, output
-from mayaff.config import MayaArgsConfig
+from mayaff.config import MayaArgsConfig, MayaFileArgsConfig
 
-__version__ = "0.1.0-beta.3"
+__version__ = "1.0.0"
 _DESCRIPTION = "Command line tool to find and replace short maya flags."
+
+
+def config_exists(parser: argparse.ArgumentParser, file_path: str) -> None:
+    """Check if config file exists on disk."""
+    if not os.path.exists(file_path):
+        parser.error(f"Config file {file_path} does not exist!")
 
 
 def set_up_argparser() -> argparse.Namespace:
@@ -36,13 +43,21 @@ def set_up_argparser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=_DESCRIPTION)
     parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
     parser.add_argument("source", nargs="+", help="Directory or files you want to format.")
-    parser.add_argument(
+
+    config_group = parser.add_mutually_exclusive_group()
+
+    config_group.add_argument(
         "-t",
         "--target-version",
-        default="2018",
+        default="2022",
         choices=config_options,
         help="Target Maya version to use when formatting flags.",
     )
+
+    config_group.add_argument(
+        "--config", help="Custom maya config file. If you want to provide a custom config file different to the target options."
+    )
+
     parser.add_argument(
         "--check",
         action="store_true",
@@ -79,7 +94,8 @@ def _main() -> int:
     """Run command line app with return code."""
     args = set_up_argparser()
     modules = [tuple(m.split(":")) for m in args.modules.split(",")]
-    config = MayaArgsConfig(args.target_version, modules)
+
+    _config = MayaFileArgsConfig(args.config, modules) if args.config else MayaArgsConfig(args.target_version, modules)
     try:
         exclued_re = re.compile(args.exclude)
     except re.error:
@@ -89,7 +105,7 @@ def _main() -> int:
     if not files:
         raise UserWarning("No input files found.")
 
-    files_changed, failed_files = format_files(files, config, quiet=args.quiet, check_only=args.check, print_diff=args.diff)
+    files_changed, failed_files = format_files(files, _config, quiet=args.quiet, check_only=args.check, print_diff=args.diff)
     if not args.quiet:
         msg = []
         if files_changed:
@@ -193,5 +209,5 @@ def run() -> None:
     try:
         sys.exit(_main())
     except Exception as e:
-        print(e)
+        output.print_failed(e)
         sys.exit(1)

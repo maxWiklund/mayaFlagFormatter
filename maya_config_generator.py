@@ -20,7 +20,7 @@ import keyword
 import os
 import re
 
-from maya import cmds, mel
+from maya import cmds, mel, standalone
 
 _RE_MAYA_COMMAND_FLAGS = re.compile(r"-(?P<short>\w+) -(?P<long>\w+)")
 
@@ -60,8 +60,12 @@ def run() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("output", default="", help="File path to export json file to.")
     args = parser.parse_args()
-    file_path = os.path.realpath(args.output)
-    generate(file_path)
+    standalone.initialize()
+    try:
+        file_path = os.path.realpath(args.output)
+        generate(file_path)
+    finally:
+        standalone.uninitialize()
 
 
 if __name__ == "__main__":

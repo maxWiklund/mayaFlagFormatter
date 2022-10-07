@@ -13,24 +13,27 @@
 # limitations under the License.
 
 import json
+import os
 import pkgutil
 from typing import List, Tuple
 
 
-class MayaArgsConfig(object):
-    """Class to manage maya flags configuration."""
+class BaseMayaConfig(object):
+    """Base class for all config classes.
 
-    def __init__(self, config_version: str = "2018", modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
-        """Construct class and load config.
+    If you implement your own config class you need to populate `self._command_data`.
+
+    """
+
+    def __init__(self, modules: List[Tuple[str, str]]):
+        """Construct class and populate modules.
 
         Args:
-            config_version: Configuration name.
             modules: List of maya modules to look for maya commands.
 
         """
-        super().__init__()
-        self._command_data = json.loads(pkgutil.get_data("mayaff", f"maya_configs/{config_version}.json"))
         self.modules = modules
+        self._command_data = {}
 
     def get_flags(self, command_name: str) -> dict:
         """Try to get command flags from command name.
@@ -43,3 +46,37 @@ class MayaArgsConfig(object):
 
         """
         return self._command_data.get(command_name, {})
+
+
+class MayaArgsConfig(BaseMayaConfig):
+    """Class to manage maya flags configuration."""
+
+    def __init__(self, config_version: str = "2022", modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
+        """Construct class and load config.
+
+        Args:
+            config_version: Configuration name.
+            modules: List of maya modules to look for maya commands.
+
+        """
+        super().__init__(modules)
+        self._command_data = json.loads(pkgutil.get_data("mayaff", f"maya_configs/{config_version}.json"))
+
+
+class MayaFileArgsConfig(BaseMayaConfig):
+    """Class to manage maya flags configuration."""
+
+    def __init__(self, file_path: str, modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
+        """Construct class and load config.
+
+        Args:
+            file_path: Config file path to load.
+            modules: List of maya modules to look for maya commands.
+
+        """
+        super().__init__(modules)
+        if not os.path.exists(file_path):
+            raise OSError(f'Config file "{file_path}" does not exist')
+
+        with open(file_path) as f:
+            self._command_data = json.load(f)

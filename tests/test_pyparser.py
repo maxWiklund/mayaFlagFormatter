@@ -5,7 +5,7 @@ import textwrap
 
 
 class TestReformat(TestCase):
-    config_cls = config.MayaArgsConfig("2018")
+    config_cls = config.MayaArgsConfig("2022")
 
     def test_case1(self):
         source_code = textwrap.dedent(
