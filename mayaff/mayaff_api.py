@@ -60,7 +60,7 @@ def format_file(
         f.write(reformatted_source)
 
     if not quiet:
-        print(f"reformatted {os.path.basename(file_name)}")
+        print(f"reformatted {os.path.relpath(file_name)}")
 
     return True
 
