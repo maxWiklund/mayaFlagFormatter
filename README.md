@@ -88,7 +88,7 @@ mayaff . --exclude-files package.py
 ```
 
 Some companies have custom wrappers around `cmds`. If you want `mayaff` to find your cmds module somewhere else use `--modules`.
-Example: `mayaff . --modules "maya:cmds,custom.module:cmds`
+Example: `mayaff . --modules "maya:cmds,custom.module:cmds"`
 
 
 ## Known limitations
