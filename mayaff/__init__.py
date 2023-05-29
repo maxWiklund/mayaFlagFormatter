@@ -49,8 +49,8 @@ def set_up_argparser() -> argparse.Namespace:
     config_group.add_argument(
         "-t",
         "--target-version",
-        default="2022",
-        choices=config_options,
+        default=max(config_options),
+        choices=sorted(config_options),
         help="Target Maya version to use when formatting flags.",
     )
 

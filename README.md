@@ -58,8 +58,8 @@ mayaff only supports python 3.7+
 ## Usage
 Options:
 ```
-usage: mayaff [-h] [-v] [-t {2018,2020,2022} | --config CONFIG] [--check] [--diff] [--quiet] [--exclude EXCLUDE]
-              [--exclude-files EXCLUDE_FILES [EXCLUDE_FILES ...]] [--modules MODULES] [--single-thread]
+usage: mayaff [-h] [-v] [-t {2018,2020,2022,2023} | --config CONFIG] [--check] [--diff] [--quiet] [--exclude EXCLUDE] [--exclude-files EXCLUDE_FILES [EXCLUDE_FILES ...]] [--modules MODULES]
+              [--single-thread]
               source [source ...]
 
 Command line tool to find and replace short maya flags.
@@ -70,9 +70,9 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  -t {2018,2020,2022}, --target-version {2018,2020,2022}
+  -t {2018,2020,2022,2023}, --target-version {2018,2020,2022,2023}
                         Target Maya version to use when formatting flags.
-  --config CONFIG       Custom maya config file. The file hase ben generated with `maya_config_generator.py`
+  --config CONFIG       Custom maya config file. If you want to provide a custom config file different to the target options.
   --check               Don't write to files. Just return the return code.
   --diff                Don't write the files back, just output a diff for each file to stdout.
   --quiet, -q           Output nothing to stdout and set return value.
