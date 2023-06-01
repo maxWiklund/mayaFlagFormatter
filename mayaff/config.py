@@ -12,10 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List, Tuple
 import json
 import os
+import pkg_resources
 import pkgutil
-from typing import List, Tuple
+
+CONFIG_OPTIONS = [
+    f.replace(".json", "") for f in pkg_resources.resource_listdir("mayaff", "maya_configs") if f.endswith(".json")
+]
+CONFIG_OPTIONS.sort()
+LATEST_CONFIG = max(CONFIG_OPTIONS, key=int)
 
 
 class BaseMayaConfig(object):
@@ -51,7 +58,7 @@ class BaseMayaConfig(object):
 class MayaArgsConfig(BaseMayaConfig):
     """Class to manage maya flags configuration."""
 
-    def __init__(self, config_version: str = "2022", modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
+    def __init__(self, config_version: str = LATEST_CONFIG, modules: List[Tuple[str, str]] = (("maya", "cmds"),)):
         """Construct class and load config.
 
         Args:

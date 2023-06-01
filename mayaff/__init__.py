@@ -14,7 +14,6 @@
 
 import argparse
 import multiprocessing
-import pkg_resources
 import re
 import sys
 import os
@@ -22,9 +21,9 @@ from concurrent import futures
 from typing import List, Tuple
 
 from mayaff import file_resources, mayaff_api, output
-from mayaff.config import MayaArgsConfig, MayaFileArgsConfig
+from mayaff.config import MayaArgsConfig, MayaFileArgsConfig, CONFIG_OPTIONS, LATEST_CONFIG
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 _DESCRIPTION = "Command line tool to find and replace short maya flags."
 
 
@@ -36,10 +35,6 @@ def config_exists(parser: argparse.ArgumentParser, file_path: str) -> None:
 
 def set_up_argparser() -> argparse.Namespace:
     """Configure argparser."""
-    config_options = [
-        f.replace(".json", "") for f in pkg_resources.resource_listdir("mayaff", "maya_configs") if f.endswith(".json")
-    ]
-
     parser = argparse.ArgumentParser(description=_DESCRIPTION)
     parser.add_argument("-v", "--version", action="version", version="%(prog)s {}".format(__version__))
     parser.add_argument("source", nargs="+", help="Directory or files you want to format.")
@@ -49,8 +44,8 @@ def set_up_argparser() -> argparse.Namespace:
     config_group.add_argument(
         "-t",
         "--target-version",
-        default=max(config_options),
-        choices=sorted(config_options),
+        default=LATEST_CONFIG,
+        choices=CONFIG_OPTIONS,
         help="Target Maya version to use when formatting flags.",
     )
 
@@ -97,11 +92,11 @@ def _main() -> int:
 
     _config = MayaFileArgsConfig(args.config, modules) if args.config else MayaArgsConfig(args.target_version, modules)
     try:
-        exclued_re = re.compile(args.exclude)
+        exclude_re = re.compile(args.exclude)
     except re.error:
         raise UserWarning("Invalid exclude regular expression.")
 
-    files = file_resources.find_python_files(args.source, args.exclude_files, exclude_pattern=exclued_re)
+    files = file_resources.find_python_files(args.source, args.exclude_files, exclude_pattern=exclude_re)
     if not files:
         raise UserWarning("No input files found.")
 

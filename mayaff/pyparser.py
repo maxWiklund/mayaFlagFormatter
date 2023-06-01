@@ -221,7 +221,7 @@ class MayaFlagsParser(object):
                     continue
 
                 if scope > 1:
-                    # A open parenthesis we don't want to account for has been open.
+                    # An open parenthesis we don't want to account for has been open.
                     # Continue until the scope hase been closed.
                     continue
 

@@ -16,11 +16,11 @@
 import difflib
 
 
-def print_failed(msg):
+def print_failed(msg: str) -> None:
     print(f"\033[31m{msg}\033[0m")
 
 
-def diff(source_a: str, source_b: str, file_name: str):
+def diff(source_a: str, source_b: str, file_name: str) -> str:
     """Generate diff of source with color.
 
     Args:
